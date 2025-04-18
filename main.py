@@ -16,9 +16,11 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
+import tkinter as tk
+from tkinter import filedialog
 
-model_path = "PlantClassification.h5"
-image_path = "vera.jpg"
+model_path = filedialog.askopenfilename()
+image_path = filedialog.askopenfilename()
 
 
 def predict(path):
