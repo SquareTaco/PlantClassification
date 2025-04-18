@@ -20,7 +20,7 @@ import tkinter as tk
 from tkinter import filedialog
 
 model_path = "PlantClassification.h5"
-image_path = filedialog.askopenfilename()
+image_path = filedialog.askopenfilename(title="Please select an image.")
 
 
 def predict(path):
