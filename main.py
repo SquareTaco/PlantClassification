@@ -19,7 +19,7 @@ from kivy.uix.button import Button
 import tkinter as tk
 from tkinter import filedialog
 
-model_path = filedialog.askopenfilename()
+model_path = "PlantClassification.h5"
 image_path = filedialog.askopenfilename()
 
 
