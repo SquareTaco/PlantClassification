@@ -29,17 +29,18 @@ from kivy.properties import ListProperty, ColorProperty
 
 model_path = "PlantClassification.h5"
 
-def predict(path):
-    #Load model
-    model = tf.keras.models.load_model(model_path)
+#Load model
+model = tf.keras.models.load_model(model_path)
 
-    label_mapping = {
-        'Aloevera': 0, 'Banana': 1, 'Bilimbi': 2, 'Cantaloupe': 3, 'Cassava': 4, 'Coconut': 5,
-        'corn': 6, 'cucumber': 7, 'curcuma': 8, 'eggplant': 9, 'galangal': 10, 'ginger': 11,
-        'guava': 12, 'kale': 13, 'longbeans': 14, 'mango': 15, 'melon': 16, 'orange': 17,
-        'paddy': 18, 'papaya': 19, 'peper chili': 20, 'pineapple': 21, 'pomelo': 22, 'shallot': 23,
-        'soybeans': 24, 'spinach': 25, 'sweet potatoes': 26, 'tobacco': 27, 'waterapple': 28, 'watermelon': 29
-    }
+label_mapping = {
+    'Aloevera': 0, 'Banana': 1, 'Bilimbi': 2, 'Cantaloupe': 3, 'Cassava': 4, 'Coconut': 5,
+    'Corn': 6, 'Cucumber': 7, 'Curcuma': 8, 'Eggplant': 9, 'Galangal': 10, 'Ginger': 11,
+    'Guava': 12, 'Kale': 13, 'Longbeans': 14, 'Mango': 15, 'Melon': 16, 'Orange': 17,
+    'Paddy': 18, 'Papaya': 19, 'Peper Chili': 20, 'Pineapple': 21, 'Pomelo': 22, 'Shallot': 23,
+    'Soybeans': 24, 'Spinach': 25, 'Sweet Potatoes': 26, 'Tobacco': 27, 'Waterapple': 28, 'Watermelon': 29
+}
+
+def predict(path):
 
     # Load and preprocess the image
     image = cv2.imread(path)
