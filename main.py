@@ -26,6 +26,7 @@ from kivy.uix.widget import Widget
 from kivy.core.image import Image as CoreImage
 from kivy.uix.label import Label
 from kivy.properties import ListProperty, ColorProperty
+import sqlite3
 
 model_path = "PlantClassification.h5"
 
@@ -204,6 +205,39 @@ class PlantFinderApp(App):
         sm.add_widget(MainScreen(name='main'))
         sm.add_widget(ImageScreen(name='image'))
         return sm
+
+class user_account():
+    def __init__(self, username, id):
+        self.id = int(id)
+        self.username = str(username)
+        c = sqlite3.connect(self.username + "plant.db")
+        db = c.cursor()
+        db.execute(
+        """
+        CREATE TABLE IF NOT EXISTS my_account (
+            username TEXT,
+            bird_name TEXT UNIQUE
+        )
+        """
+        )
+        c.commit()
+        c.close()
+
+    def collectPlant(self, plantName):
+        c = sqlite3.connect(self.username + "_account.db")
+        db = c.cursor()
+        db.execute(
+            "INSERT OR IGNORE INTO my_account (username, bird_name) VALUES (?, ?)", 
+            (self.username, plantName))
+        c.commit()
+        c.close()
+
+    def displayPlants(self):
+        c = sqlite3.connect(self.username + "plant.db")
+        db = c.cursor()
+        db.execute("SELECT bird_name FROM my_account where username = ?", (self.username,))
+        collectedPlants = db.fetchall()
+        print(collectedPlants)
 
 #------Main Method------
 def main():
