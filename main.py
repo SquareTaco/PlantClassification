@@ -63,6 +63,9 @@ def predict(path):
 class MainScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.username = "Default"
+        self.id = 1
+        self.your_Account = user_account(self.username, self.id) #default account for now
         self.image_path = ""
         with self.canvas.before:
             self.bg_color = Color(1, 1, 1, 1)
@@ -103,7 +106,7 @@ class MainScreen(Screen):
         self.bg_rect.pos = instance.pos
 
     def displayPlants(self, instance):
-        #here would be a method to display the collected plants
+        self.your_Account.displayPlants()
         pass
 
     def switch_to_image(self, instance):
@@ -113,7 +116,7 @@ class MainScreen(Screen):
 class ImageScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
+        
         self.default_texture = CoreImage("selectYourImage.png").texture
         self.background_texture = None
 
@@ -177,10 +180,13 @@ class ImageScreen(Screen):
 
     def switch_to_main(self, instance):
         if self.background_texture:
-            main_screen = self.manager.get_screen('main')
-            main_screen.image_path = self.image_path
-            main_screen.bg_rect.texture = self.bg_rect.texture
-            main_screen.predict_label.text = predict(self.image_path)
+            self.main_screen = self.manager.get_screen('main')
+            self.account = self.main_screen.your_Account
+            self.main_screen.image_path = self.image_path
+            self.main_screen.bg_rect.texture = self.bg_rect.texture
+            prediction = predict(self.image_path)
+            self.main_screen.predict_label.text = prediction
+            self.account.collectPlant(prediction)
             self.manager.current = 'main'
         else:
             self.error_label.text = "Please select an image."
@@ -210,32 +216,32 @@ class user_account():
     def __init__(self, username, id):
         self.id = int(id)
         self.username = str(username)
-        c = sqlite3.connect(self.username + "plant.db")
-        db = c.cursor()
-        db.execute(
-        """
-        CREATE TABLE IF NOT EXISTS my_account (
-            username TEXT,
-            bird_name TEXT UNIQUE
+        conn = sqlite3.connect(self.username + "_account.db")
+        database = conn.cursor()
+        database.execute(
+            """
+            CREATE TABLE IF NOT EXISTS my_account (
+                username TEXT,
+                plant_name TEXT UNIQUE
+            )
+            """
         )
-        """
-        )
-        c.commit()
-        c.close()
+        conn.commit()
+        conn.close()
 
     def collectPlant(self, plantName):
         c = sqlite3.connect(self.username + "_account.db")
         db = c.cursor()
         db.execute(
-            "INSERT OR IGNORE INTO my_account (username, bird_name) VALUES (?, ?)", 
+            "INSERT OR IGNORE INTO my_account (username, plant_name) VALUES (?, ?)", 
             (self.username, plantName))
         c.commit()
         c.close()
 
     def displayPlants(self):
-        c = sqlite3.connect(self.username + "plant.db")
+        c = sqlite3.connect(self.username + "_account.db")
         db = c.cursor()
-        db.execute("SELECT bird_name FROM my_account where username = ?", (self.username,))
+        db.execute("SELECT plant_name FROM my_account where username = ?", (self.username,))
         collectedPlants = db.fetchall()
         print(collectedPlants)
 
